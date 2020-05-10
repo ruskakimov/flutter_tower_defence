@@ -36,10 +36,12 @@ class Enemy {
     canvas.drawRect(
       Rect.fromCenter(
         center: position * tileSize,
-        width: tileSize / 4 * health,
-        height: tileSize / 4 * health,
+        width: tileSize * _enemySize,
+        height: tileSize * _enemySize,
       ),
       paint,
     );
   }
+
+  double get _enemySize => 0.25 * (health * 2).ceil() / 2;
 }

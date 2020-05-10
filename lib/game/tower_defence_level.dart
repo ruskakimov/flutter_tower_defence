@@ -21,22 +21,51 @@ class TowerDefenceLevel extends Game with Resizable {
     Point(1, 0),
     Point(1, 1),
     Point(1, 2),
+    Point(2, 2),
+    Point(3, 2),
+    Point(3, 1),
+    Point(4, 1),
+    Point(5, 1),
+    Point(5, 2),
+    Point(5, 3),
+    Point(5, 4),
+    Point(4, 4),
+    Point(3, 4),
+    Point(2, 4),
+    Point(2, 5),
+    Point(2, 6),
+    Point(3, 6),
+    Point(4, 6),
+    Point(5, 6),
+    Point(5, 7),
+    Point(5, 8),
+    Point(5, 9),
   ];
 
   final List<Enemy> _enemies = [
-    Enemy(path: _path, health: 1, tilesPerSecond: 0.25, tilesTraveled: 0),
-    Enemy(path: _path, health: 1, tilesPerSecond: 0.25, tilesTraveled: -1),
-    Enemy(path: _path, health: 1, tilesPerSecond: 0.25, tilesTraveled: -2),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: 0),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -1),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -2),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -3),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -4),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -5),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -6),
+    Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -7),
   ];
 
   final List<Tower> _towers = [];
 
-  int get rows => 3;
-  int get cols => 3;
+  int get rows => 10;
+  int get cols => 8;
 
   bool canDrop(Point<int> tileCoord) =>
       !_path.contains(tileCoord) &&
       _towers.where((tower) => tower.tileCoord == tileCoord).isEmpty;
+
+  void addEnemy() {
+    _enemies.add(
+        Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: 0));
+  }
 
   void drop({TowerType type, Point<int> tileCoord}) {
     _towers.add(LaserTower(tileCoord));
@@ -45,6 +74,18 @@ class TowerDefenceLevel extends Game with Resizable {
   @override
   void render(Canvas canvas) {
     final tileSize = size.width / cols;
+    final pathPaint = Paint()..color = Colors.grey[800];
+    _path.forEach((tileCoord) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          tileCoord.x * tileSize,
+          tileCoord.y * tileSize,
+          tileSize,
+          tileSize,
+        ),
+        pathPaint,
+      );
+    });
     _enemies.forEach((enemy) => enemy.render(canvas, tileSize: tileSize));
     _towers.forEach((tower) => tower.render(canvas, tileSize: tileSize));
   }

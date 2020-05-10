@@ -16,7 +16,14 @@ abstract class Tower {
   void damage(double t, {List<Enemy> enemies});
 
   bool inRange(Enemy enemy) {
-    return true;
+    if (enemy.position == null) return false;
+    final minX = tileCoord.x - range;
+    final maxX = tileCoord.x + 1 + range;
+    final minY = tileCoord.y - range;
+    final maxY = tileCoord.y + 1 + range;
+    final x = enemy.position.dx;
+    final y = enemy.position.dy;
+    return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
 }
 
@@ -28,7 +35,7 @@ class LaserTower extends Tower {
 
   LaserTower(Point<int> tileCoord) : super(tileCoord);
 
-  double damagePerSecond = 0.1;
+  double damagePerSecond = 0.2;
   Enemy target;
 
   @override
@@ -52,9 +59,7 @@ class LaserTower extends Tower {
 
   @override
   void damage(double t, {List<Enemy> enemies}) {
-    target = enemies.firstWhere(
-        (enemy) => inRange(enemy) && enemy.position != null,
-        orElse: () => null);
+    target = enemies.firstWhere((enemy) => inRange(enemy), orElse: () => null);
     if (target != null) target.health -= damagePerSecond * t;
   }
 }

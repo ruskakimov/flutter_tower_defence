@@ -67,28 +67,38 @@ class _LevelPageState extends State<LevelPage> {
             ),
           ],
         ),
-        Draggable<TowerType>(
-          data: TowerType.laser,
-          maxSimultaneousDrags: 1,
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-          ),
-          feedbackOffset: Offset(0, -80),
-          dragAnchor: DragAnchor.child,
-          feedback: Transform.translate(
-            offset: Offset(0, -80),
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            RaisedButton(
+                child: Text('Add'),
+                onPressed: () {
+                  game.addEnemy();
+                }),
+            Draggable<TowerType>(
+              data: TowerType.laser,
+              maxSimultaneousDrags: 1,
+              child: Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+              ),
+              feedbackOffset: Offset(0, -80),
+              dragAnchor: DragAnchor.child,
+              feedback: Transform.translate(
+                offset: Offset(0, -80),
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ],
     );
