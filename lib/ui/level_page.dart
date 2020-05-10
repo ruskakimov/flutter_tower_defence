@@ -48,7 +48,10 @@ class _LevelPageState extends State<LevelPage> {
 
                   return DragTarget<TowerType>(
                     onWillAccept: (_) => game.canDrop(tileCoord),
-                    //onAccept: (towerType) => game.drop(towerType, pos),
+                    onAccept: (towerType) => game.drop(
+                      type: towerType,
+                      tileCoord: tileCoord,
+                    ),
                     builder: (context, candidates, rejects) {
                       return Container(
                         height: 50,
@@ -65,7 +68,7 @@ class _LevelPageState extends State<LevelPage> {
           ],
         ),
         Draggable<TowerType>(
-          data: TowerType.turret,
+          data: TowerType.laser,
           maxSimultaneousDrags: 1,
           child: Container(
             height: 50,
@@ -90,8 +93,4 @@ class _LevelPageState extends State<LevelPage> {
       ],
     );
   }
-}
-
-enum TowerType {
-  turret,
 }

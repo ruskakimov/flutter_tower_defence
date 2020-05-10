@@ -36,8 +36,8 @@ class Enemy {
     canvas.drawRect(
       Rect.fromCenter(
         center: position * tileSize,
-        width: tileSize / 4,
-        height: tileSize / 4,
+        width: tileSize / 4 * health,
+        height: tileSize / 4 * health,
       ),
       paint,
     );
