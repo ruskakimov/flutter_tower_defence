@@ -14,6 +14,7 @@ import 'enemy.dart';
 
 enum DropType {
   laserTower,
+  beamTower,
 }
 
 class TowerDefenceLevel extends Game with Resizable {
@@ -61,7 +62,8 @@ class TowerDefenceLevel extends Game with Resizable {
   int get cols => 8;
 
   bool willDrop({DropType type, Point<int> tileCoord}) {
-    hoveringTower = LaserTower(tileCoord);
+    if (type == DropType.laserTower) hoveringTower = LaserTower(tileCoord);
+    if (type == DropType.beamTower) hoveringTower = BeamTower(tileCoord);
     return _canDrop(tileCoord);
   }
 

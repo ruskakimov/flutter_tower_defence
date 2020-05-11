@@ -3,38 +3,27 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'calculate_enemy_offset.dart';
 import 'enemy.dart';
 
 abstract class Tower {
-  final rangeBorderPaint = Paint()
+  static final rangeBorderPaint = Paint()
     ..color = Colors.white
     ..strokeWidth = 2
     ..style = PaintingStyle.stroke;
-  final rangeAreaPaint = Paint()
+  static final rangeAreaPaint = Paint()
     ..color = Colors.white12
     ..style = PaintingStyle.fill;
 
   Tower(this.tileCoord);
 
   Point<int> tileCoord;
-  int range;
 
   void render(Canvas canvas, {double tileSize});
 
   void renderRange(Canvas canvas, {double tileSize});
 
   void damage(double t, {List<Enemy> enemies});
-
-  bool inRange(Enemy enemy) {
-    if (enemy.position == null) return false;
-    final minX = tileCoord.x - range;
-    final maxX = tileCoord.x + 1 + range;
-    final minY = tileCoord.y - range;
-    final maxY = tileCoord.y + 1 + range;
-    final x = enemy.position.dx;
-    final y = enemy.position.dy;
-    return x >= minX && x <= maxX && y >= minY && y <= maxY;
-  }
 }
 
 class LaserTower extends Tower {
@@ -45,11 +34,9 @@ class LaserTower extends Tower {
 
   LaserTower(Point<int> tileCoord) : super(tileCoord);
 
-  double damagePerSecond = 0.5;
+  final int range = 1;
+  final double damagePerSecond = 0.5;
   Enemy target;
-
-  @override
-  int get range => 1;
 
   @override
   void render(Canvas canvas, {double tileSize}) {
@@ -73,17 +60,66 @@ class LaserTower extends Tower {
     final size = tileSize * (2 * range + 1);
     canvas.drawRect(
       Rect.fromCenter(center: center, width: size, height: size),
-      rangeAreaPaint,
+      Tower.rangeAreaPaint,
     );
     canvas.drawRect(
       Rect.fromCenter(center: center, width: size, height: size),
-      rangeBorderPaint,
+      Tower.rangeBorderPaint,
     );
   }
 
   @override
   void damage(double t, {List<Enemy> enemies}) {
-    target = enemies.firstWhere((enemy) => inRange(enemy), orElse: () => null);
+    target = enemies.firstWhere((enemy) => _inRange(enemy), orElse: () => null);
     if (target != null) target.health -= damagePerSecond * t;
   }
+
+  bool _inRange(Enemy enemy) {
+    if (enemy.position == null) return false;
+    final minX = tileCoord.x - range;
+    final maxX = tileCoord.x + 1 + range;
+    final minY = tileCoord.y - range;
+    final maxY = tileCoord.y + 1 + range;
+    final x = enemy.position.dx;
+    final y = enemy.position.dy;
+    return x >= minX && x <= maxX && y >= minY && y <= maxY;
+  }
+}
+
+class BeamTower extends Tower {
+  static final towerPaint = Paint()
+    ..color = Colors.lightBlue
+    ..strokeWidth = 2;
+  static final directions = [TOP, RIGHT, BOTTOM, LEFT];
+
+  BeamTower(Point<int> tileCoord) : super(tileCoord);
+
+  int directionIndex = 0;
+
+  void changeDirection() {
+    directionIndex = (directionIndex + 1) % directions.length;
+  }
+
+  @override
+  void render(Canvas canvas, {double tileSize}) {
+    final towerCenter = Offset(tileCoord.x + 0.5, tileCoord.y + 0.5) * tileSize;
+    canvas.drawRect(
+      Rect.fromCenter(
+        center: towerCenter,
+        width: tileSize / 2,
+        height: tileSize / 2,
+      ),
+      towerPaint,
+    );
+    final d = directions[directionIndex];
+    final directionOffset =
+        Offset(d.x.toDouble(), d.y.toDouble()) * tileSize * 0.5;
+    canvas.drawLine(towerCenter, towerCenter + directionOffset, towerPaint);
+  }
+
+  @override
+  void renderRange(Canvas canvas, {double tileSize}) {}
+
+  @override
+  void damage(double t, {List<Enemy> enemies}) {}
 }

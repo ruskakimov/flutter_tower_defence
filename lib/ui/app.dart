@@ -7,6 +7,14 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tower defence game',
+      theme: ThemeData(
+        textTheme: TextTheme(
+          bodyText2: TextStyle(
+            color: Colors.white,
+            fontSize: 32,
+          ),
+        ),
+      ),
       home: LevelPage(game: TowerDefenceLevel()),
     );
   }
