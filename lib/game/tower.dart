@@ -24,6 +24,8 @@ abstract class Tower {
   void renderRange(Canvas canvas, {double tileSize});
 
   void damage(double t, {List<Enemy> enemies});
+
+  void onTap();
 }
 
 class LaserTower extends Tower {
@@ -84,6 +86,9 @@ class LaserTower extends Tower {
     final y = enemy.position.dy;
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
+
+  @override
+  void onTap() {}
 }
 
 class BeamTower extends Tower {
@@ -95,10 +100,6 @@ class BeamTower extends Tower {
   BeamTower(Point<int> tileCoord) : super(tileCoord);
 
   int directionIndex = 0;
-
-  void changeDirection() {
-    directionIndex = (directionIndex + 1) % directions.length;
-  }
 
   @override
   void render(Canvas canvas, {double tileSize}) {
@@ -122,4 +123,13 @@ class BeamTower extends Tower {
 
   @override
   void damage(double t, {List<Enemy> enemies}) {}
+
+  @override
+  void onTap() {
+    _changeDirection();
+  }
+
+  void _changeDirection() {
+    directionIndex = (directionIndex + 1) % directions.length;
+  }
 }

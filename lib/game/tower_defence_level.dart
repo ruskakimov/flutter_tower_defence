@@ -86,6 +86,12 @@ class TowerDefenceLevel extends Game with Resizable {
         Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: 0));
   }
 
+  void onTap(Point<int> tileCoord) {
+    final targetTower =
+        _towers.firstWhere((tower) => tower.tileCoord == tileCoord);
+    targetTower.onTap();
+  }
+
   @override
   void render(Canvas canvas) {
     final tileSize = size.width / cols;

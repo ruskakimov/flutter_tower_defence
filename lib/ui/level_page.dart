@@ -54,20 +54,25 @@ class _LevelPageState extends State<LevelPage> {
                       return Colors.transparent;
                     }
 
-                    return DragTarget<DropType>(
-                      onWillAccept: (type) =>
-                          game.willDrop(type: type, tileCoord: tileCoord),
-                      onAccept: (_) => game.drop(),
-                      onLeave: (_) => game.dropCancel(),
-                      builder: (context, candidates, rejects) {
-                        return Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            color: getBgColor(candidates, rejects),
-                          ),
-                        );
+                    return GestureDetector(
+                      onTap: () {
+                        game.onTap(tileCoord);
                       },
+                      child: DragTarget<DropType>(
+                        onWillAccept: (type) =>
+                            game.willDrop(type: type, tileCoord: tileCoord),
+                        onAccept: (_) => game.drop(),
+                        onLeave: (_) => game.dropCancel(),
+                        builder: (context, candidates, rejects) {
+                          return Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: getBgColor(candidates, rejects),
+                            ),
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
