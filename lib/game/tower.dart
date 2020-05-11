@@ -6,12 +6,22 @@ import 'package:flutter/material.dart';
 import 'enemy.dart';
 
 abstract class Tower {
+  final rangeBorderPaint = Paint()
+    ..color = Colors.white
+    ..strokeWidth = 2
+    ..style = PaintingStyle.stroke;
+  final rangeAreaPaint = Paint()
+    ..color = Colors.white12
+    ..style = PaintingStyle.fill;
+
   Tower(this.tileCoord);
 
   Point<int> tileCoord;
   int range;
 
   void render(Canvas canvas, {double tileSize});
+
+  void renderRange(Canvas canvas, {double tileSize});
 
   void damage(double t, {List<Enemy> enemies});
 
@@ -35,7 +45,7 @@ class LaserTower extends Tower {
 
   LaserTower(Point<int> tileCoord) : super(tileCoord);
 
-  double damagePerSecond = 0.2;
+  double damagePerSecond = 0.5;
   Enemy target;
 
   @override
@@ -55,6 +65,20 @@ class LaserTower extends Tower {
     if (target != null) {
       canvas.drawLine(towerCenter, target.position * tileSize, laserPaint);
     }
+  }
+
+  @override
+  void renderRange(Canvas canvas, {double tileSize}) {
+    final center = Offset(tileCoord.x + 0.5, tileCoord.y + 0.5) * tileSize;
+    final size = tileSize * (2 * range + 1);
+    canvas.drawRect(
+      Rect.fromCenter(center: center, width: size, height: size),
+      rangeAreaPaint,
+    );
+    canvas.drawRect(
+      Rect.fromCenter(center: center, width: size, height: size),
+      rangeBorderPaint,
+    );
   }
 
   @override

@@ -46,12 +46,11 @@ class _LevelPageState extends State<LevelPage> {
                     return Colors.transparent;
                   }
 
-                  return DragTarget<TowerType>(
-                    onWillAccept: (_) => game.canDrop(tileCoord),
-                    onAccept: (towerType) => game.drop(
-                      type: towerType,
-                      tileCoord: tileCoord,
-                    ),
+                  return DragTarget<DropType>(
+                    onWillAccept: (type) =>
+                        game.willDrop(type: type, tileCoord: tileCoord),
+                    onAccept: (_) => game.drop(),
+                    onLeave: (_) => game.dropCancel(),
                     builder: (context, candidates, rejects) {
                       return Container(
                         height: 50,
@@ -75,8 +74,8 @@ class _LevelPageState extends State<LevelPage> {
                 onPressed: () {
                   game.addEnemy();
                 }),
-            Draggable<TowerType>(
-              data: TowerType.laser,
+            Draggable<DropType>(
+              data: DropType.laserTower,
               maxSimultaneousDrags: 1,
               child: Container(
                 height: 50,

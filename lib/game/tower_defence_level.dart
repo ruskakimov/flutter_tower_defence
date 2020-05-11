@@ -12,8 +12,8 @@ import 'enemy.dart';
 // Offset     - position
 // Offset * tileSize - canvas coordinate
 
-enum TowerType {
-  laser,
+enum DropType {
+  laserTower,
 }
 
 class TowerDefenceLevel extends Game with Resizable {
@@ -55,20 +55,33 @@ class TowerDefenceLevel extends Game with Resizable {
 
   final List<Tower> _towers = [];
 
+  Tower hoveringTower;
+
   int get rows => 10;
   int get cols => 8;
 
-  bool canDrop(Point<int> tileCoord) =>
+  bool willDrop({DropType type, Point<int> tileCoord}) {
+    hoveringTower = LaserTower(tileCoord);
+    return _canDrop(tileCoord);
+  }
+
+  bool _canDrop(Point<int> tileCoord) =>
       !_path.contains(tileCoord) &&
       _towers.where((tower) => tower.tileCoord == tileCoord).isEmpty;
+
+  void drop() {
+    if (hoveringTower != null && _canDrop(hoveringTower.tileCoord))
+      _towers.add(hoveringTower);
+    hoveringTower = null;
+  }
+
+  void dropCancel() {
+    hoveringTower = null;
+  }
 
   void addEnemy() {
     _enemies.add(
         Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: 0));
-  }
-
-  void drop({TowerType type, Point<int> tileCoord}) {
-    _towers.add(LaserTower(tileCoord));
   }
 
   @override
@@ -88,6 +101,8 @@ class TowerDefenceLevel extends Game with Resizable {
     });
     _enemies.forEach((enemy) => enemy.render(canvas, tileSize: tileSize));
     _towers.forEach((tower) => tower.render(canvas, tileSize: tileSize));
+    if (hoveringTower != null)
+      hoveringTower.renderRange(canvas, tileSize: tileSize);
   }
 
   @override
