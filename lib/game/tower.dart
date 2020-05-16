@@ -96,27 +96,77 @@ class BeamTower extends Tower {
     ..color = Colors.lightBlue
     ..strokeWidth = 2;
   static final directions = [TOP, RIGHT, BOTTOM, LEFT];
+  static final stateDurations = <double>[5, 1];
+  final statesPeriod = stateDurations.reduce((a, b) => a + b);
 
   BeamTower(Point<int> tileCoord) : super(tileCoord);
 
   int directionIndex = 0;
   final double damagePerSecond = 10;
+  double stateTimePosition = 0;
+
+  int get stateIndex {
+    double low = 0;
+    for (var i = 0; i < stateDurations.length; i++) {
+      final high = low + stateDurations[i];
+      if (stateTimePosition >= low && stateTimePosition <= high) return i;
+      low = high;
+    }
+    return -1;
+  }
+
+  bool get isCharging => stateIndex == 0;
+  bool get isShooting => !isCharging;
+
+  double get juiceLevel {
+    if (isCharging) {
+      return stateTimePosition / stateDurations[0];
+    } else {
+      return 1 - (stateTimePosition - stateDurations[0]) / stateDurations[1];
+    }
+  }
 
   @override
   void render(Canvas canvas, {double tileSize}) {
     final towerCenter = Offset(tileCoord.x + 0.5, tileCoord.y + 0.5) * tileSize;
-    canvas.drawRect(
-      Rect.fromCenter(
-        center: towerCenter,
-        width: tileSize / 2,
-        height: tileSize / 2,
-      ),
+    canvas.drawCircle(
+      towerCenter,
+      tileSize / 3,
       towerPaint,
     );
+
     final d = directions[directionIndex];
     final directionOffset =
-        Offset(d.x.toDouble(), d.y.toDouble()) * tileSize * 10;
-    canvas.drawLine(towerCenter, towerCenter + directionOffset, towerPaint);
+        Offset(d.x.toDouble(), d.y.toDouble()) * tileSize * 0.5;
+    final laserPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Colors.lightBlue
+      ..strokeWidth = tileSize / 5;
+    canvas.drawLine(
+      towerCenter,
+      towerCenter + directionOffset,
+      laserPaint,
+    );
+
+    if (isShooting) {
+      canvas.drawLine(
+        towerCenter,
+        towerCenter + directionOffset * 20,
+        laserPaint,
+      );
+    }
+
+    canvas.drawArc(
+      Rect.fromCenter(
+        center: towerCenter,
+        width: tileSize / 3,
+        height: tileSize / 3,
+      ),
+      -pi / 2,
+      -juiceLevel * pi * 2,
+      true,
+      Paint()..color = Colors.white,
+    );
   }
 
   @override
@@ -124,14 +174,22 @@ class BeamTower extends Tower {
 
   @override
   void damage(double t, {List<Enemy> enemies}) {
-    final d = directions[directionIndex];
-    final affectedTiles = List.generate(10, (index) => tileCoord + d * index);
+    _updateStateTimePosition(t);
 
-    enemies.where((enemy) => enemy.position != null).forEach((enemy) {
-      final enemyCoord = _positionToTileCoord(enemy.position);
-      if (affectedTiles.contains(enemyCoord))
-        enemy.health -= damagePerSecond * t;
-    });
+    if (isShooting) {
+      final d = directions[directionIndex];
+      final affectedTiles = List.generate(10, (index) => tileCoord + d * index);
+
+      enemies.where((enemy) => enemy.position != null).forEach((enemy) {
+        final enemyCoord = _positionToTileCoord(enemy.position);
+        if (affectedTiles.contains(enemyCoord))
+          enemy.health -= damagePerSecond * t;
+      });
+    }
+  }
+
+  void _updateStateTimePosition(double t) {
+    stateTimePosition = (stateTimePosition + t) % statesPeriod;
   }
 
   Point _positionToTileCoord(Offset pos) {
