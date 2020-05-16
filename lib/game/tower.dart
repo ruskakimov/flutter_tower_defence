@@ -100,6 +100,7 @@ class BeamTower extends Tower {
   BeamTower(Point<int> tileCoord) : super(tileCoord);
 
   int directionIndex = 0;
+  final double damagePerSecond = 10;
 
   @override
   void render(Canvas canvas, {double tileSize}) {
@@ -114,7 +115,7 @@ class BeamTower extends Tower {
     );
     final d = directions[directionIndex];
     final directionOffset =
-        Offset(d.x.toDouble(), d.y.toDouble()) * tileSize * 0.5;
+        Offset(d.x.toDouble(), d.y.toDouble()) * tileSize * 10;
     canvas.drawLine(towerCenter, towerCenter + directionOffset, towerPaint);
   }
 
@@ -122,7 +123,20 @@ class BeamTower extends Tower {
   void renderRange(Canvas canvas, {double tileSize}) {}
 
   @override
-  void damage(double t, {List<Enemy> enemies}) {}
+  void damage(double t, {List<Enemy> enemies}) {
+    final d = directions[directionIndex];
+    final affectedTiles = List.generate(10, (index) => tileCoord + d * index);
+
+    enemies.where((enemy) => enemy.position != null).forEach((enemy) {
+      final enemyCoord = _positionToTileCoord(enemy.position);
+      if (affectedTiles.contains(enemyCoord))
+        enemy.health -= damagePerSecond * t;
+    });
+  }
+
+  Point _positionToTileCoord(Offset pos) {
+    return Point(pos.dx.floor(), pos.dy.floor());
+  }
 
   @override
   void onTap() {
