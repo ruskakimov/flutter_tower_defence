@@ -15,6 +15,7 @@ class Enemy {
 
   final List<Point<int>> path;
   final double tilesPerSecond;
+  final int maxHealth = 1;
   double health;
   double tilesTraveled;
   Offset position;

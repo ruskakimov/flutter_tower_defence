@@ -54,6 +54,9 @@ class TowerDefenceLevel extends Game with Resizable {
     Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -7),
   ];
 
+  int coins = 0;
+  Function onCoinChange;
+
   final List<Tower> _towers = [];
 
   Tower hoveringTower;
@@ -117,6 +120,10 @@ class TowerDefenceLevel extends Game with Resizable {
   void update(double t) {
     _enemies.forEach((enemy) => enemy.update(t));
     _towers.forEach((tower) => tower.damage(t, enemies: _enemies));
+    _enemies.where((enemy) => enemy.isDead).forEach((enemy) {
+      coins += enemy.maxHealth;
+      if (onCoinChange != null) onCoinChange(coins);
+    });
     _enemies.removeWhere((enemy) => enemy.isDead);
   }
 }
