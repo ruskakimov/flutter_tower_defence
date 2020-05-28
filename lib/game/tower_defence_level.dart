@@ -76,9 +76,6 @@ class TowerDefenceLevel extends Game with Resizable {
       _towers.where((tower) => tower.tileCoord == tileCoord).isEmpty;
 
   void drop() {
-    // TODO: subtract coins
-    // laser = 5 coins
-    // beam = 20 coins
     if (hoveringTower != null &&
         _canDrop(hoveringTower.tileCoord) &&
         coins >= hoveringTower.price) {
