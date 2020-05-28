@@ -18,6 +18,7 @@ abstract class Tower {
   Tower(this.tileCoord);
 
   Point<int> tileCoord;
+  int price;
 
   void render(Canvas canvas, {double tileSize});
 
@@ -37,6 +38,7 @@ class LaserTower extends Tower {
   LaserTower(Point<int> tileCoord) : super(tileCoord);
 
   final int range = 1;
+  final int price = 5;
   final double damagePerSecond = 0.5;
   Enemy target;
 
@@ -102,6 +104,7 @@ class BeamTower extends Tower {
   BeamTower(Point<int> tileCoord) : super(tileCoord);
 
   int directionIndex = 0;
+  final int price = 20;
   final double damagePerSecond = 10;
   double stateTimePosition = 0;
 

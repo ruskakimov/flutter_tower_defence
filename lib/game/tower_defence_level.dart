@@ -54,7 +54,8 @@ class TowerDefenceLevel extends Game with Resizable {
     Enemy(path: _path, health: 1, tilesPerSecond: 1, tilesTraveled: -7),
   ];
 
-  int coins = 0;
+  // TODO: base health
+  int coins = 10;
   Function onCoinChange;
 
   final List<Tower> _towers = [];
@@ -75,8 +76,16 @@ class TowerDefenceLevel extends Game with Resizable {
       _towers.where((tower) => tower.tileCoord == tileCoord).isEmpty;
 
   void drop() {
-    if (hoveringTower != null && _canDrop(hoveringTower.tileCoord))
+    // TODO: subtract coins
+    // laser = 5 coins
+    // beam = 20 coins
+    if (hoveringTower != null &&
+        _canDrop(hoveringTower.tileCoord) &&
+        coins >= hoveringTower.price) {
       _towers.add(hoveringTower);
+      coins -= hoveringTower.price;
+      if (onCoinChange != null) onCoinChange(coins);
+    }
     hoveringTower = null;
   }
 

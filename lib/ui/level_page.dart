@@ -13,15 +13,11 @@ class LevelPage extends StatefulWidget {
 }
 
 class _LevelPageState extends State<LevelPage> {
-  int coins = 0;
-
   @override
   void initState() {
     super.initState();
-    widget.game.onCoinChange = (updatedCoins) {
-      setState(() {
-        coins = updatedCoins;
-      });
+    widget.game.onCoinChange = (_) {
+      setState(() {});
     };
   }
 
@@ -41,7 +37,7 @@ class _LevelPageState extends State<LevelPage> {
               onPressed: () {
                 game.addEnemy();
               }),
-          Text('Coins: $coins'),
+          Text('Coins: ${game.coins}'),
           Stack(
             children: <Widget>[
               AspectRatio(
