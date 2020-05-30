@@ -15,7 +15,10 @@ abstract class Tower {
     ..color = Colors.white12
     ..style = PaintingStyle.fill;
 
-  Tower(this.tileCoord);
+  Tower({
+    this.tileCoord,
+    this.price,
+  });
 
   Point<int> tileCoord;
   int price;
@@ -35,10 +38,13 @@ class LaserTower extends Tower {
     ..color = Colors.yellow
     ..strokeWidth = 2;
 
-  LaserTower(Point<int> tileCoord) : super(tileCoord);
+  LaserTower(Point<int> tileCoord)
+      : super(
+          tileCoord: tileCoord,
+          price: 5,
+        );
 
   final int range = 1;
-  final int price = 5;
   final double damagePerSecond = 0.5;
   Enemy target;
 
@@ -101,10 +107,13 @@ class BeamTower extends Tower {
   static final stateDurations = <double>[5, 1];
   final statesPeriod = stateDurations.reduce((a, b) => a + b);
 
-  BeamTower(Point<int> tileCoord) : super(tileCoord);
+  BeamTower(Point<int> tileCoord)
+      : super(
+          tileCoord: tileCoord,
+          price: 20,
+        );
 
   int directionIndex = 0;
-  final int price = 20;
   final double damagePerSecond = 10;
   double stateTimePosition = 0;
 
